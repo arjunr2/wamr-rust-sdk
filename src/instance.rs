@@ -9,15 +9,17 @@
 #![allow(unused_variables)]
 
 use core::ffi::c_char;
+use std::ffi::CString;
 
 use wamr_sys::{
     wasm_module_inst_t, wasm_runtime_deinstantiate, wasm_runtime_destroy_thread_env,
-    wasm_runtime_init_thread_env, wasm_runtime_instantiate,
+    wasm_runtime_init_thread_env, wasm_runtime_instantiate, 
+    wasm_application_execute_main, wasm_runtime_get_exception
 };
 
 use crate::{
     helper::error_buf_to_string, helper::DEFAULT_ERROR_BUF_SIZE, module::Module, runtime::Runtime,
-    RuntimeError,
+    helper::exception_to_string, RuntimeError,
 };
 
 #[derive(Debug)]
@@ -87,6 +89,32 @@ impl Instance {
     pub fn get_inner_instance(&self) -> wasm_module_inst_t {
         self.instance
     }
+
+    pub fn execute_main(
+        &self, 
+        params: &Vec<String>
+    ) -> Result<(), RuntimeError> {
+        let mut argv = Vec::new();
+        for param in params {
+            let c_str = CString::new(param.as_str()).unwrap();
+            argv.push(c_str.into_raw());
+        }
+
+        let result = unsafe {
+            wasm_application_execute_main(self.instance, argv.len() as i32, argv.as_mut_ptr())
+        };
+
+        if !result {
+            unsafe {
+                let exception_c = wasm_runtime_get_exception(self.get_inner_instance());
+                return Err(RuntimeError::ExecutionError(exception_to_string(
+                    exception_c,
+                )));
+            }
+        }
+        Ok(())
+    }
+
 }
 
 impl Drop for Instance {
