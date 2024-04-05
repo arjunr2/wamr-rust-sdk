@@ -21,15 +21,17 @@ fn main() {
         .define("WAMR_BUILD_AOT", "1")
         .define("WAMR_BUILD_INTERP", "1")
         .define("WAMR_BUILD_FAST_INTERP", "1")
-        .define("WAMR_BUILD_JIT", enable_llvm_jit)
         // mvp
         .define("WAMR_BUILD_BULK_MEMORY", "1")
         .define("WAMR_BUILD_REF_TYPES", "1")
         .define("WAMR_BUILD_SIMD", "1")
         // wasi
-        .define("WAMR_BUILD_LIBC_WASI", "1")
-        // `nostdlib`
-        .define("WAMR_BUILD_LIBC_BUILTIN", "1")
+        .define("WAMR_BUILD_LIB_WASI_THREADS", "1")
+        // wali
+        .define("WAMR_BUILD_CUSTOM_NAME_SECTION", "1")
+        .define("WAMR_BUILD_DUMP_CALL_STACK", "1")
+        .define("WAMR_BUILD_MEMORY_PROFILING", "0")
+        .define("WAMR_BUILD_LIBC_WALI", "1")
         .build_target("iwasm_static")
         .build();
 
