@@ -10,6 +10,7 @@
 
 use core::ffi::c_char;
 use std::ffi::CString;
+use std::ptr;
 
 use wamr_sys::{
     wasm_module_inst_t, wasm_runtime_deinstantiate, wasm_runtime_destroy_thread_env,
@@ -90,18 +91,28 @@ impl Instance {
         self.instance
     }
 
+    /// execute the main function of a wasm module with parameters (argv)
+    ///
+    /// Note: Argv[0] must provide the path of the script
+    ///
+    /// Return `RuntimeError::CompilationError` if failed.
     pub fn execute_main(
         &self, 
         params: &Vec<String>
     ) -> Result<(), RuntimeError> {
         let mut argv = Vec::new();
+
         for param in params {
             let c_str = CString::new(param.as_str()).unwrap();
             argv.push(c_str.into_raw());
         }
+        let argc = argv.len();
+
+        // Null-terminate argv
+        argv.push(ptr::null_mut());
 
         let result = unsafe {
-            wasm_application_execute_main(self.instance, argv.len() as i32, argv.as_mut_ptr())
+            wasm_application_execute_main(self.instance, argc as i32, argv.as_mut_ptr())
         };
 
         if !result {
