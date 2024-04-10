@@ -11,9 +11,9 @@ use std::ffi::c_void;
 use std::sync::Mutex;
 
 use wamr_sys::{
-    mem_alloc_type_t_Alloc_With_Pool, mem_alloc_type_t_Alloc_With_System_Allocator,
-    wasm_runtime_destroy, wasm_runtime_full_init, wasm_runtime_init, NativeSymbol,
-    RunningMode_Mode_Interp, RunningMode_Mode_LLVM_JIT, RuntimeInitArgs,
+    log_level_t, mem_alloc_type_t_Alloc_With_Pool, mem_alloc_type_t_Alloc_With_System_Allocator, 
+    wasm_runtime_destroy, wasm_runtime_full_init, wasm_runtime_init, wasm_runtime_set_log_level, 
+    NativeSymbol, RunningMode_Mode_Interp, RunningMode_Mode_LLVM_JIT, RuntimeInitArgs, 
 };
 
 use crate::{host_function::HostFunctionList, RuntimeError};
@@ -58,6 +58,18 @@ impl Runtime {
             _ => Ok(Runtime {
                 host_functions: HostFunctionList::new("empty"),
             }),
+        }
+    }
+
+    /// Set the log level for the runtime.
+    ///
+    /// # Arguments
+    ///
+    /// * `level` - The log level to set.
+    ///
+    pub fn set_log_level(&self, level: log_level_t) {
+        unsafe {
+            wasm_runtime_set_log_level(level);
         }
     }
 }
@@ -133,6 +145,12 @@ impl RuntimeBuilder {
     ) -> RuntimeBuilder {
         self.host_functions
             .register_host_function(function_name, function_ptr);
+        self
+    }
+
+    /// set max number of threads
+    pub fn set_max_thread_num(mut self, max_thread_num: u32) -> RuntimeBuilder {
+        self.args.max_thread_num = max_thread_num;
         self
     }
 

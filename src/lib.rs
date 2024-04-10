@@ -145,6 +145,15 @@ use std::error;
 use std::fmt;
 use std::io;
 
+pub use wamr_sys::{
+    log_level_t,
+    log_level_t_WASM_LOG_LEVEL_FATAL as LOG_LEVEL_FATAL,
+    log_level_t_WASM_LOG_LEVEL_ERROR as LOG_LEVEL_ERROR,
+    log_level_t_WASM_LOG_LEVEL_WARNING as LOG_LEVEL_WARNING,
+    log_level_t_WASM_LOG_LEVEL_DEBUG as LOG_LEVEL_DEBUG,
+    log_level_t_WASM_LOG_LEVEL_VERBOSE as LOG_LEVEL_VERBOSE,
+};
+
 pub mod function;
 mod helper;
 pub mod host_function;
