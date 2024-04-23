@@ -25,9 +25,9 @@ pub struct HostFunctionList {
 }
 
 impl HostFunctionList {
-    pub fn new(module_name: &str) -> Self {
+    pub fn new(module_name: Option<&str>) -> Self {
         HostFunctionList {
-            module_name: CString::new(module_name).unwrap(),
+            module_name: CString::new(module_name.unwrap_or("host")).unwrap(),
             host_functions: Vec::new(),
             native_symbols: Vec::new(),
         }
@@ -42,6 +42,10 @@ impl HostFunctionList {
         let last = self.host_functions.last().unwrap();
         self.native_symbols
             .push(pack_host_function(&(last.function_name), function_ptr));
+    }
+
+    pub fn set_module_name(&mut self, module_name: &str) {
+        self.module_name = CString::new(module_name).unwrap();
     }
 
     pub fn get_native_symbols(&mut self) -> &mut Vec<NativeSymbol> {

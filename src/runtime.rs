@@ -51,12 +51,12 @@ impl Runtime {
         match *ref_cnt {
             1 => match unsafe { wasm_runtime_init() } {
                 true => Ok(Runtime {
-                    host_functions: HostFunctionList::new("empty"),
+                    host_functions: HostFunctionList::new(Some("empty")),
                 }),
                 false => Err(RuntimeError::InitializationFailure),
             },
             _ => Ok(Runtime {
-                host_functions: HostFunctionList::new("empty"),
+                host_functions: HostFunctionList::new(Some("empty")),
             }),
         }
     }
@@ -101,7 +101,7 @@ impl Default for RuntimeBuilder {
         let args = RuntimeInitArgs::default();
         RuntimeBuilder {
             args,
-            host_functions: HostFunctionList::new("host"),
+            host_functions: HostFunctionList::new(None),
         }
     }
 }
@@ -134,6 +134,13 @@ impl RuntimeBuilder {
         self.args.running_mode = RunningMode_Mode_LLVM_JIT;
         self.args.llvm_jit_opt_level = opt_level;
         self.args.llvm_jit_size_level = size_level;
+        self
+    }
+
+    /// host function module name
+    /// set the module name for implemented host function
+    pub fn set_host_function_module_name(mut self, module_name: &str) -> RuntimeBuilder {
+        self.host_functions.set_module_name(module_name);
         self
     }
 
