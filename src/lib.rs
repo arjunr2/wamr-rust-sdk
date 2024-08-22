@@ -152,7 +152,10 @@ pub use wamr_sys::{
     log_level_t_WASM_LOG_LEVEL_WARNING as LOG_LEVEL_WARNING,
     log_level_t_WASM_LOG_LEVEL_DEBUG as LOG_LEVEL_DEBUG,
     log_level_t_WASM_LOG_LEVEL_VERBOSE as LOG_LEVEL_VERBOSE,
-    wasm_exec_env_t
+    wasm_exec_env_t,
+    wasm_module_inst_t,
+    wasm_runtime_addr_app_to_native,
+    wasm_runtime_get_module_inst
 };
 
 pub mod function;
