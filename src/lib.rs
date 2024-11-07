@@ -156,7 +156,8 @@ pub use wamr_sys::{
     wasm_module_inst_t,
     wasm_runtime_addr_app_to_native,
     wasm_runtime_get_module_inst,
-    wasm_runtime_get_exec_env_uid
+    wasm_runtime_get_exec_env_uid,
+    wasm_cluster_cancel_thread
 };
 
 pub mod function;
